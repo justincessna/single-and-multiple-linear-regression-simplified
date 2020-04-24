@@ -60,3 +60,21 @@ sns.lmplot('Length of Membership', # Horizontal axis
            size = 8,
            aspect =2 ) # size and dimension
 plt.plot(col4, final_y)
+
+#Now for the multiple variable portion
+#Setting up the variables
+a = cust_data[['Avg. Session Length', 'Time on App','Time on Website', 'Length of Membership']]
+b = cust_data["Yearly Amount Spent"]
+from sklearn.model_selection import train_test_split
+a_train, a_test, b_train, b_test = train_test_split(a, b, test_size=0.3, random_state=101)
+lm1 = LinearRegression()
+lm1.fit(a_train,b_train)
+
+intercept_mult = lm1.intercept_
+coef_1 = lm1.coef_[0]
+coef_2 = lm1.coef_[1]
+coef_3 = lm1.coef_[2]
+coef_4 = lm1.coef_[3]
+
+#Equation of Multi Reg Result
+print("Line of Best Fit (Multiple Regression):",intercept_mult,"+",coef_1,"* Session Length","+",coef_2,"* Time on App","+",coef_3,"* Time on Site","+",coef_4,"* Length of Membership")
