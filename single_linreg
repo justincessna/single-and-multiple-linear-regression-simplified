@@ -1,0 +1,62 @@
+#importing the libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+#Reading the data
+cust_data = pd.read_csv(r"filepath\Ecommerce Customers")
+
+#Data Cleaning
+col1 = cust_data["Avg. Session Length"].tolist()
+col2 = cust_data["Time on App"].tolist()
+col3 = cust_data["Time on Website"].tolist()
+col4 = cust_data["Length of Membership"].tolist()
+col5 = cust_data["Yearly Amount Spent"].tolist()
+
+#Plotting each attribute against each other - but we're only focusing on each one with "Amount Spent Annually"
+sns.pairplot(cust_data)
+#By visually scanning the above plots, we can see that there is a clear linear relationship between length of membership and amount spent
+sns.lmplot('Length of Membership', # Horizontal axis
+           'Yearly Amount Spent', # Vertical axis
+           data=cust_data, # Data source
+           fit_reg=False, # Don't fix a regression line
+           size = 8,
+           aspect =2 ) # size and dimension
+
+#Setting up the variables
+x = cust_data[['Length of Membership']]
+y = cust_data["Yearly Amount Spent"]
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=101)
+
+#Training the model
+from sklearn.linear_model import LinearRegression
+lm = LinearRegression()
+lm.fit(x_train,y_train)
+
+#The "b" value in "mx + b"
+print(lm.intercept_)
+
+#All "m" values in each "mx + b"
+#Length of membership is the last (4thsns. one)
+print(lm.coef_)
+
+#Plotting the results
+intercept = lm.intercept_
+coef_4 = lm.coef_
+
+plot = []
+for i in col4:
+    plot.append(i * coef_4)
+final_y = []
+for i in plot:
+    final_y.append(i + intercept)
+sns.lmplot('Length of Membership', # Horizontal axis
+           'Yearly Amount Spent', # Vertical axis
+           data=cust_data, # Data source
+           fit_reg=False, # Don't fix a regression line
+           size = 8,
+           aspect =2 ) # size and dimension
+plt.plot(col4, final_y)
